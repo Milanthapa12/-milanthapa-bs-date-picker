@@ -14,7 +14,7 @@ A lightweight React date picker component designed for Tailwind / shadcn-style U
 ## Install
 
 ```bash
-npm install bs-date-picker
+npm install @milanthapamgr/bs-date-picker
 ```
 
 Install peer dependencies in your app:
@@ -23,24 +23,11 @@ Install peer dependencies in your app:
 npm install react react-dom @radix-ui/react-popover @radix-ui/react-icons
 ```
 
-If you are using the local repo directly instead of npm, build the package first so TypeScript declarations are generated:
-
-```bash
-cd /home/milan/Desktop/vritico/bs-date
-npm install
-npm run build
-```
-
-Then install it in your consuming project:
-
-```bash
-npm install /home/milan/Desktop/vritico/bs-date
-```
 
 ## Usage
 
 ```tsx
-import { DatePicker } from 'bs-date-picker';
+import { DatePicker } from '@milanthapamgr/bs-date-picker';
 
 export function App() {
   const [date, setDate] = useState<Date | null>(null);
@@ -71,7 +58,9 @@ export function App() {
 - `disabled?: boolean`
 - `className?: string`
 - `inputClassName?: string`
+- `inputStyle?: React.CSSProperties`
 - `calendarClassName?: string`
+- `calendarStyle?: React.CSSProperties`
 - `minDate?: Date`
 - `maxDate?: Date`
 - `calendarType?: 'ad' | 'bs' | 'both'`  
@@ -91,7 +80,7 @@ export function App() {
 
 - The popover content is rendered in a portal, so the picker works reliably inside modals.
 - Styling uses Tailwind utility classes, so it matches Tailwind/shadcn-style apps naturally.
-- If you want custom styles, override `className`, `inputClassName`, or `calendarClassName`.
+- If you want custom styles or custom widths, override `className`, `inputClassName`, `inputStyle`, `calendarClassName`, or `calendarStyle`.
 
 ## Demo
 

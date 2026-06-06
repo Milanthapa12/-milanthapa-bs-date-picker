@@ -7,7 +7,7 @@ This guide explains how to install and use the `bs-date-picker` package inside a
 From your Laravel app frontend directory (usually the project root or `resources/js`):
 
 ```bash
-npm install bs-date-picker
+npm install @milanthapamgr/bs-date-picker
 ```
 
 If your package is still local and not published to npm, install from a local path:
@@ -36,7 +36,7 @@ Create or update a React page used by Inertia, for example `resources/js/Pages/B
 
 ```tsx
 import React, { useState } from 'react';
-import { DatePicker } from 'bs-date-picker';
+import { DatePicker } from '@milanthapamgr/bs-date-picker';
 
 export default function BookingPage() {
   const [date, setDate] = useState<Date | null>(null);

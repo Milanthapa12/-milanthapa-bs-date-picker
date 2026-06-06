@@ -99,7 +99,9 @@ export interface DatePickerProps {
   disabled?: boolean;
   className?: string;
   inputClassName?: string;
+  inputStyle?: React.CSSProperties;
   calendarClassName?: string;
+  calendarStyle?: React.CSSProperties;
   minDate?: Date;
   maxDate?: Date;
   calendarType?: 'ad' | 'bs' | 'both';
@@ -114,7 +116,7 @@ const iconButton =
   'inline-flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 transition hover:border-slate-300 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50';
 
 const popoverPanel =
-  'z-50 max-w-[240px] rounded-2xl border border-slate-200 bg-white p-3 shadow-lg ring-1 ring-slate-900/5';
+  'z-50 rounded-2xl border border-slate-200 bg-white p-3 shadow-lg ring-1 ring-slate-900/5';
 
 const dateButton =
   'inline-flex h-8 w-8 items-center justify-center rounded-full text-[11px] font-medium text-slate-700 transition-colors';
@@ -512,7 +514,9 @@ export function DatePicker({
   disabled = false,
   className = '',
   inputClassName = '',
+  inputStyle,
   calendarClassName = '',
+  calendarStyle,
   minDate,
   maxDate,
   calendarType = 'ad',
@@ -651,13 +655,43 @@ export function DatePicker({
       );
   const yearRange = Array.from({ length: 12 }, (_, index) => currentYear - 6 + index);
 
+  const triggerRef = React.useRef<HTMLDivElement | null>(null);
+  const [triggerWidth, setTriggerWidth] = React.useState<number>();
+
+  React.useLayoutEffect(() => {
+    if (!triggerRef.current) return;
+
+    const updateWidth = () => {
+      if (triggerRef.current) {
+        setTriggerWidth(triggerRef.current.getBoundingClientRect().width);
+      }
+    };
+
+    updateWidth();
+
+    const observer = new ResizeObserver(() => {
+      updateWidth();
+    });
+
+    observer.observe(triggerRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  React.useLayoutEffect(() => {
+    if (open && triggerRef.current) {
+      setTriggerWidth(triggerRef.current.getBoundingClientRect().width);
+    }
+  }, [open]);
+
   return (
-    <div className={`w-full ${className}`}>
+    <div className={className || 'w-full'}>
       <label className="block text-sm">{label}</label>
       <Popover.Root open={open} onOpenChange={setOpen}>
         <Popover.Trigger asChild>
           <div
+            ref={triggerRef}
             className={`${buttonBase} ${inputClassName}`}
+            style={inputStyle}
             aria-label={label}
             role="button"
           >
@@ -714,6 +748,7 @@ export function DatePicker({
             align="start"
             sideOffset={8}
             className={`${popoverPanel} ${calendarClassName}`}
+            style={{ minWidth: triggerWidth, ...calendarStyle }}
           >
             <div className="flex items-center justify-between gap-2 pb-2">
               <button
