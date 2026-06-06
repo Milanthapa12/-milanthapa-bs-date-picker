@@ -16,7 +16,7 @@ export default function SingleDate() {
                       onChange={setInlineDate}
                       label="Inline date"
                       placeholder="Select a date"
-                      calendarType="both"
+                      calendarType="bs"
                       dateFormat="YYYY/MM/DD"
                     />
 

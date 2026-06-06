@@ -108,10 +108,11 @@ export interface DatePickerProps {
   calendarType?: 'ad' | 'bs' | 'both';
   dateFormat?: string | string[];
   selectionMode?: SelectionMode;
+  labelClassName?: string;
 }
 
 const buttonBase =
-  'inline-flex items-center justify-between rounded-lg border border-slate-200 bg-white px-2 py-1 text-[11px] text-slate-900 shadow-sm transition-all hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400';
+  'inline-flex items-center justify-between rounded-lg border border-slate-200 bg-white px-2 py-1 text-[11px] text-slate-900 transition-all hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400';
 
 const iconButton =
   'inline-flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 transition hover:border-slate-300 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50';
@@ -331,17 +332,31 @@ function bsDaysInMonth(year: number, month: number) {
   }
   return bikramSambat.daysInMonth(year, month);
 }
-
 function bsDaysInYear(year: number) {
   const months = BS_MONTH_DATA[year];
-  if (months) {
-    return months.reduce((sum, value) => sum + value, 0);
+
+  if (!months) {
+    throw new Error(`BS_YEAR_DATA_MISSING: ${year}`);
   }
-  return Array.from({ length: 12 }, (_, index) => bikramSambat.daysInMonth(year, index + 1)).reduce(
-    (sum, value) => sum + value,
-    0
-  );
+
+  const total = months.reduce((sum, v) => sum + v, 0);
+
+  if (!Number.isFinite(total)) {
+    throw new Error(`BS_YEAR_DATA_CORRUPTED: ${year}`);
+  }
+
+  return total;
 }
+// function bsDaysInYear(year: number) {
+//   const months = BS_MONTH_DATA[year];
+//   if (months) {
+//     return months.reduce((sum, value) => sum + value, 0);
+//   }
+//   return Array.from({ length: 12 }, (_, index) => bikramSambat.daysInMonth(year, index + 1)).reduce(
+//     (sum, value) => sum + value,
+//     0
+//   );
+// }
 
 function bsToAd(bsYear: number, bsMonth: number, bsDay: number) {
   const maxDay = bsDaysInMonth(bsYear, bsMonth);
@@ -359,6 +374,15 @@ function bsToAd(bsYear: number, bsMonth: number, bsDay: number) {
 
   const utcDate = new Date(BS_EPOCH_TS + days * MS_PER_DAY);
   return new Date(utcDate.getUTCFullYear(), utcDate.getUTCMonth(), utcDate.getUTCDate());
+}
+
+function safeAdToBs(date: Date | null) {
+  if (!date || isNaN(date.getTime())) return null;
+
+  const year = date.getFullYear();
+  if (year < 1943 || year > 2099) return null; // clamp safely
+
+  return adToBs(date);
 }
 
 function adToBs(date: Date) {
@@ -391,7 +415,8 @@ export function getBsMonthForSelection(
   if (bsDate) {
     return { year: bsDate.year, month: bsDate.month };
   }
-  const bs = adToBs(selected);
+  const bs = safeAdToBs(selected);
+  if (!bs) return { year: 0, month: 0 };
   return { year: bs.year, month: bs.month };
 }
 
@@ -535,7 +560,8 @@ export function DatePicker({
   maxDate,
   calendarType = 'ad',
   dateFormat = 'YYYY-MM-DD',
-  selectionMode = 'date'
+  selectionMode = 'date',
+  labelClassName = '',
 }: DatePickerProps) {
   const [open, setOpen] = React.useState(false);
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(value ?? defaultValue ?? null);
@@ -587,7 +613,10 @@ export function DatePicker({
       return;
     }
 
-    setSelectedDate(parsed);
+    if (!parsed || isNaN(parsed.getTime())) {
+      setInputValue(displayValue);
+      return;
+    }
     setInputValue(
       calendarType === 'ad'
         ? formatDateValue(parsed, dateFormat, locale, selectionMode)
@@ -708,7 +737,12 @@ export function DatePicker({
 
   return (
     <div className={className || 'w-full'}>
-      <label className="block text-sm">{label}</label>
+      {label && (
+        <label 
+        
+        className={`block text-sm ${labelClassName}`}
+        >{label}</label>
+      )}
       <Popover.Root open={open} onOpenChange={setOpen}>
         <Popover.Trigger asChild>
           <div
