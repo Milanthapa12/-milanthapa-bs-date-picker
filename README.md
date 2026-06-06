@@ -23,6 +23,20 @@ Install peer dependencies in your app:
 npm install react react-dom @radix-ui/react-popover @radix-ui/react-icons
 ```
 
+If you are using the local repo directly instead of npm, build the package first so TypeScript declarations are generated:
+
+```bash
+cd /home/milan/Desktop/vritico/bs-date
+npm install
+npm run build
+```
+
+Then install it in your consuming project:
+
+```bash
+npm install /home/milan/Desktop/vritico/bs-date
+```
+
 ## Usage
 
 ```tsx

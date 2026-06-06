@@ -22,6 +22,8 @@
     "dev": "vite",
     "preview": "vite preview",
     "build": "tsc -p tsconfig.build.json && vite build",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run build",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --ext .ts,.tsx"
   },
