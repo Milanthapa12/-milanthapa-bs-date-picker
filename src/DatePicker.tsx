@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as Popover from '@radix-ui/react-popover';
 import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon, Cross2Icon } from '@radix-ui/react-icons';
 import * as bikramSambat from 'bikram-sambat';
+import './styles.css';
 
 type BsCalendarCell = {
   year: number;

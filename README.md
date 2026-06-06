@@ -21,7 +21,7 @@ Install peer dependencies in your app:
 
 ```bash
 npm install react react-dom @radix-ui/react-popover @radix-ui/react-icons
-```
+````
 
 
 ## Usage
@@ -80,19 +80,7 @@ export function App() {
 
 - The popover content is rendered in a portal, so the picker works reliably inside modals.
 - Styling uses Tailwind utility classes, so it matches Tailwind/shadcn-style apps naturally.
-- If you want custom styles or custom widths, override `className`, `inputClassName`, `inputStyle`, `calendarClassName`, or `calendarStyle`.
-
-## Demo
-
-Run the demo locally to see both the inline and modal picker examples:
-
-```bash
-npm install
-npm run dev
-```
-
-Open the page and test:
-
+- The component imports its own bundled CSS, so consuming apps do not need to manually import additional CSS for the picker.
 - `Inline example` for a non-modal picker
 - `Modal example` for a picker inside a modal rendered through a portal
 
