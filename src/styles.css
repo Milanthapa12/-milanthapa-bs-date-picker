@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+.datepicker-panel {
+  @apply rounded-2xl border border-slate-200 bg-white p-4 shadow-lg ring-1 ring-slate-900/5;
+}
+
+.datepicker-day {
+  @apply inline-flex h-10 w-10 items-center justify-center rounded-full text-sm font-medium text-slate-700 transition-colors;
+}
+
+.datepicker-day:hover {
+  @apply bg-slate-100;
+}
+
+.datepicker-day-selected {
+  @apply bg-slate-900 text-white shadow-sm;
+}
+
+.datepicker-day-today {
+  @apply border border-slate-300;
+}
