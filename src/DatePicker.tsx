@@ -357,11 +357,13 @@ function bsToAd(bsYear: number, bsMonth: number, bsDay: number) {
     days += bsDaysInMonth(bsYear, month);
   }
 
-  return new Date(BS_EPOCH_TS + days * MS_PER_DAY);
+  const utcDate = new Date(BS_EPOCH_TS + days * MS_PER_DAY);
+  return new Date(utcDate.getUTCFullYear(), utcDate.getUTCMonth(), utcDate.getUTCDate());
 }
 
 function adToBs(date: Date) {
-  let remaining = Math.floor((date.getTime() - BS_EPOCH_TS) / MS_PER_DAY) + 1;
+  const normalized = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  let remaining = Math.floor((normalized.getTime() - BS_EPOCH_TS) / MS_PER_DAY) + 1;
   let year = BS_YEAR_ZERO;
 
   while (true) {
@@ -380,6 +382,17 @@ function adToBs(date: Date) {
   }
 
   return { year, month, day: remaining };
+}
+
+export function getBsMonthForSelection(
+  selected: Date,
+  bsDate?: { year: number; month: number; day: number }
+): { year: number; month: number } {
+  if (bsDate) {
+    return { year: bsDate.year, month: bsDate.month };
+  }
+  const bs = adToBs(selected);
+  return { year: bs.year, month: bs.month };
 }
 
 function getGridDates(currentMonth: Date) {
@@ -558,6 +571,15 @@ export function DatePicker({
     }
   }, [value]);
 
+  React.useEffect(() => {
+    if (!open || !selectedDate) return;
+    if (isBsCalendar) {
+      setCurrentBsMonth(adToBs(selectedDate));
+    } else {
+      setCurrentMonth(selectedDate);
+    }
+  }, [open, isBsCalendar, selectedDate]);
+
   const commitInputValue = (closeOnSuccess = false) => {
     const parsed = parseDateString(inputValue, allowedFormats);
     if (!parsed || disabled || !clampDate(parsed, minDate, maxDate)) {
@@ -596,7 +618,7 @@ export function DatePicker({
         : `${formatDateValue(selected, dateFormat, locale, selectionMode)} · ${formatBsDate(selected, dateFormat, selectionMode)}`
     );
     setCurrentMonth(selected);
-    setCurrentBsMonth(adToBs(selected));
+    setCurrentBsMonth(getBsMonthForSelection(selected, bsDate));
     onChange?.(selected);
     setOpen(false);
   };

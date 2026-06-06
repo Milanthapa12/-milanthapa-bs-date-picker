@@ -4,7 +4,9 @@ import { DatePicker } from './DatePicker';
 export default function SingleDate() {
 
     const [inlineDate, setInlineDate] = React.useState<Date | null>(null);
-  return (
+  console.log('inlineDate', inlineDate);
+  
+    return (
     <div>
         <div className="flex align-middle gap-4">
 
@@ -18,7 +20,7 @@ export default function SingleDate() {
                       dateFormat="YYYY/MM/DD"
                     />
 
-          <DatePicker
+          {/* <DatePicker
                     inputClassName=""
                       value={inlineDate}
                       onChange={setInlineDate}
@@ -26,7 +28,7 @@ export default function SingleDate() {
                       placeholder="Select a date"
                       calendarType="ad"
                       dateFormat="YYYY/MM/DD"
-                    />
+                    /> */}
         </div>
     </div>
   );
